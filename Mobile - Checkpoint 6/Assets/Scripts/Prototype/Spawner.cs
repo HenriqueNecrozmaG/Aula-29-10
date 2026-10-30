@@ -1,13 +1,17 @@
+using System.Collections;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] EnemyStats baseStats;
-    [SerializeField] EnemyUnit enemyPrefab;
+    [SerializeField] private EnemyStats baseStats;
+    [SerializeField] private EnemyUnit enemyPrefab;
+    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private float spawnTime;
 
-    EnemyStats fireEnemy1;
-    EnemyStats fireEnemy2;
-    EnemyStats fireEnemy3;
+
+    private EnemyStats fireEnemy1;
+    private EnemyStats fireEnemy2;
+    private EnemyStats fireEnemy3;
 
     void Start()
     {
@@ -17,8 +21,6 @@ public class Spawner : MonoBehaviour
         fireEnemy1.speed = 2;
         fireEnemy1.scoreGiven = 10;
         fireEnemy1.enemyColor = Color.yellow;
-        EnemyUnit enemy1 = Instantiate(enemyPrefab, new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0), Quaternion.identity);
-        enemy1.Setup(fireEnemy1);
 
         fireEnemy2 = baseStats.Clone();
         fireEnemy2.name = "Fogo 2";
@@ -26,8 +28,6 @@ public class Spawner : MonoBehaviour
         fireEnemy2.speed = 4;
         fireEnemy2.scoreGiven = 15;
         fireEnemy2.enemyColor = Color.red;
-        EnemyUnit enemy2 = Instantiate(enemyPrefab, new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0), Quaternion.identity);
-        enemy2.Setup(fireEnemy2);
 
         fireEnemy3 = baseStats.Clone();
         fireEnemy3.name = "Fogo 3";
@@ -35,7 +35,48 @@ public class Spawner : MonoBehaviour
         fireEnemy3.speed = 6;
         fireEnemy3.scoreGiven = 30;
         fireEnemy3.enemyColor = Color.rebeccaPurple;
-        EnemyUnit enemy3 = Instantiate(enemyPrefab, new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0), Quaternion.identity);
-        enemy3.Setup(fireEnemy3);
+
+        StartCoroutine(Spawn());
+    }
+
+
+    void CreateEnemy(int spawnIndex)
+    {
+        EnemyUnit enemy = Instantiate(enemyPrefab, spawnPoints[spawnIndex].position, Quaternion.identity);
+        int indexEnemy = Random.Range(1, 4);
+        if (indexEnemy == 1)
+        {
+            enemy.Setup(fireEnemy1);
+        }
+        else if (indexEnemy == 2)
+        {
+            enemy.Setup(fireEnemy2);
+        }
+        else if (indexEnemy == 3)
+        {
+            enemy.Setup(fireEnemy3);
+        }
+    }
+
+    IEnumerator Spawn()
+    {
+        //Spawn Point 0
+        yield return new WaitForSeconds(spawnTime);
+        CreateEnemy(0);
+
+        //Spawn Point 1
+        yield return new WaitForSeconds(spawnTime);
+        CreateEnemy(1);
+
+        //Spawn Point 2
+        yield return new WaitForSeconds(spawnTime);
+        CreateEnemy(2);
+
+        //Spawn Point 3
+        yield return new WaitForSeconds(spawnTime);
+        CreateEnemy(3);
+
+        //Reestart Coroutine
+        StartCoroutine(Spawn());
     }
 }

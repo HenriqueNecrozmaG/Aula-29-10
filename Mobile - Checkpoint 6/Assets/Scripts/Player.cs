@@ -11,7 +11,6 @@ public class Player : MonoBehaviour
 
     [Header("Input Settings")]
     [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private InputActionReference jumpAction;
 
     [Header("Knockback Settings")]
     [SerializeField] private float knockbackForce = 10f;
@@ -24,7 +23,8 @@ public class Player : MonoBehaviour
     private MeshRenderer meshRenderer;
     private float moveInput, knockbackTimer;
     private Vector3 velocity, knockbackVelocity;
-    private bool jumpQueued;
+    
+    public bool jumpQueued, pauseQueued;
 
     public static bool isGrounded;
 
@@ -36,12 +36,11 @@ public class Player : MonoBehaviour
     void OnEnable()
     {
         moveAction.action.Enable();
-        jumpAction.action.Enable();
     }
+
     void OnDisable()
     {
         moveAction.action.Disable();
-        jumpAction.action.Disable();
     }
 
     void Update()
@@ -51,16 +50,12 @@ public class Player : MonoBehaviour
         HandleJump();
         ApplyGravity();
         ApplyMovement();
+        Pause();
     }
 
     void ReadInput()
     {
         moveInput = moveAction.action.ReadValue<Vector2>().x;
-        
-        if (jumpAction.action.WasPressedThisFrame())
-        {
-            jumpQueued = true;
-        }
     }
 
     void UpdateGroundedState()
@@ -77,9 +72,9 @@ public class Player : MonoBehaviour
     void HandleJump()
     {
         if (!jumpQueued) return;
-        
+
         jumpQueued = false;
-        
+
         if (!isGrounded) return;
         
         velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -130,6 +125,15 @@ public class Player : MonoBehaviour
     public void StartBlink()
     {
         StartCoroutine(Blink());
+    }
+
+    void Pause()
+    {
+        if (!pauseQueued) return;
+
+        pauseQueued = false;
+
+        GameManager.Instance.PauseGame();
     }
 
     IEnumerator Blink()

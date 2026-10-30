@@ -7,7 +7,7 @@ public class EnemyStats : IPrototype<EnemyStats>
     public string name;
     public int health;
     public float speed;
-    public float scoreGiven;
+    public int scoreGiven;
     public Color enemyColor;
 
     public EnemyStats Clone()

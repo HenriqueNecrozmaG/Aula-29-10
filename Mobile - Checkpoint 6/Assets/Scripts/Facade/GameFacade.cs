@@ -2,10 +2,28 @@ using UnityEngine;
 
 public class GameFacade : MonoBehaviour
 {
-    [SerializeField] UIManager uiManager;
+    public static GameFacade Instance;
 
-    public void StartMatch()
+    private void Awake()
     {
-        uiManager.ShowHUD();
+        if (Instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        Instance = this;
     }
+
+    public void StartGame()
+    {
+        UIManager.Instance.ShowHUD();
+    }
+
+    public void EndGame()
+    {
+        UIManager.Instance.ShowEnd();
+    }
+
+
 }
